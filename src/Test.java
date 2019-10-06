@@ -1,64 +1,51 @@
-import java.io.Console;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import Classes.SFA;
 import Classes.SFAInterface;
-import Public.Input;
 import Public.Limits;
 import Public.Output;
+import Utils.Log;
 
 public class Test {
 	
 	public static void main(String[] args) {
-		//ConfusionMatrix confMatrix = new ConfusionMatrix();
-		List<Input> inputArray = ConfusionMatrix.getInputArray();
-		//int[] vesselArray = ConfusionMatrix.getIvesselArray();
-		//Map<Integer, Map<Double, Boolean>> classesVess = ConfusionMatrix.getVelClass();
-		
-		System.out.println("Start test SFA");
-		
-		//Map<Integer, Map<Double, Boolean>> classVess  = new HashMap<Integer, Map<Double, Boolean>>();
-		Map<Double, Boolean> classVessID;
+		int[][] confusionMatrix = new int[3][3];
+		int ok = 0;
+		int nok = 0;
+		Log.debugConsole("Start test SFA");
 		SFAInterface dsa;
-		for (int vesselIndex = 2;vesselIndex<3;vesselIndex++)
-		{
-			int vessalId = vesselIndex;//vesselArray[vesselIndex];
-			classVessID  = new HashMap<Double, Boolean>();
-			try {
-				System.out.println("\nStart test isFishing "+vessalId);
-				dsa = new SFA(vessalId, 0.05, 0.1); 
-				System.out.println("\nSFA Started ");
-				Limits l = dsa.GetLimit();
-				dsa.isFishing(2);
-				System.out.println(  "limit: "+ l.min + " "+ l.max);
-				for (Iterator<Input> i = inputArray.iterator(); i.hasNext();) {
-					Input item = i.next();
-					System.out.println("\nvelocity "+ item.velocity );
-					boolean isFishing = dsa.isFishing(item.velocity);
-					boolean isNewArea = dsa.isNewArea(item.gps);
-					System.out.println(  "isFishing: "+isFishing );
-					System.out.println(  "isNewArea: "+isNewArea );
-					Output res = dsa.newData(item);
-					classVessID.put(item.velocity, res.isFishing);
-					System.out.println(  "isFishing: "+res.isFishing );
-					System.out.println(  "isNewArea: "+res.isNewArea );
+		int vessalId = 2;
+		try {
+			dsa = new SFA(vessalId, 0.05, 0.1);//0.05,0.1 
+			Log.debugConsole("\nSFA Started ");
+			Limits l = dsa.GetLimit();
+			Log.debugConsole(  "limit: "+ l.min + " "+ l.max);
+			List<TestData> records  = ConfusionMatrix.getInputFromFile();
+			
+			for (int i =0;i< records.size(); i++) {
+				TestData testData = records.get(i);
+				Output out = dsa.newData(testData.input);
+				//Log.debugConsole(testData.cl +" "+ testData.input.velocity + " "+out.isFishing);
+				int newClass = 1;
+				if(out.isFishing)
+				{
+					newClass = ((out.isNewArea) ? 2 : 0);
 				}
-			}catch(Exception ex) { 
-				ex.printStackTrace();
-			    System.err.println(ex);
+				if(testData.cl == newClass)
+				{
+					ok+=1;
+				}else {
+					nok+=1;
+				}
+				confusionMatrix[testData.cl][newClass]+=1;
 			}
-			//classVess.put(vessalId, classVessID);
-			//ConfusionMatrix.getConfusionMatrix(classesVess.get(vessalId), classVessID);
-
+		}catch(Exception ex) { 
+			ex.printStackTrace();
+			Log.errorConsole(ex);
 		}
-		System.out.println("\nEND");
-		
-		
-		
+		Log.debugConsole("OK: "+ ok + " NOK: "+nok);
+		ConfusionMatrix.evaluateConfusionMatrix(confusionMatrix);
+		Log.debugConsole("\nEND");
 	}
 	
 	
