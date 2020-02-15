@@ -129,13 +129,13 @@ public class SFA implements SFAInterface {
 	 */
 	private double checkLimit( double limit)
 	{
-		if (limit<=0)
+		if (limit<0)
 		{
-			return 0.1; 
+			return 0; 
 		}
-		if (limit>=0.9)
+		if (limit>0.9)
 		{
-			return 0.9; 
+			return 1    ; 
 		}
 		return limit;
 	}

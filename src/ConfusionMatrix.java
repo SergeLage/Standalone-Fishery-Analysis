@@ -35,9 +35,9 @@ class ConfusionMatrix {
 	private static void getRecall(int[][] confusionMatrix)// tp / tp+fn 
 	{
 		Log.debugConsole("\nRecall ");
-		Log.debugConsole("0 "+confusionMatrix[0][0] / (confusionMatrix[0][0] +confusionMatrix[1][0]+confusionMatrix[2][0] +0.0)); //fishing
-		Log.debugConsole("1 "+confusionMatrix[1][1] / (confusionMatrix[0][1] +confusionMatrix[1][1]+confusionMatrix[2][1] +0.0)); //fishing
-		Log.debugConsole("2 "+confusionMatrix[2][2] / (confusionMatrix[0][2] +confusionMatrix[1][2]+confusionMatrix[2][2]+0.0 )); //fishing
+		Log.debugConsole("0 "+confusionMatrix[0][0] / (confusionMatrix[0][0] +confusionMatrix[0][1]+confusionMatrix[0][2] +0.0)); //fishing
+		Log.debugConsole("1 "+confusionMatrix[1][1] / (confusionMatrix[1][0] +confusionMatrix[1][1]+confusionMatrix[1][2] +0.0)); //fishing
+		Log.debugConsole("2 "+confusionMatrix[2][2] / (confusionMatrix[2][0] +confusionMatrix[2][1]+confusionMatrix[2][2]+0.0 )); //fishing
 		
 	}
 	
