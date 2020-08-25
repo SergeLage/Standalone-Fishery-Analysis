@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SFALib:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SFALib_jar</output-path>
+    <root id="archive" name="SFALib.jar">
+      <element id="module-output" name="SFALib" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/weka.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/postgresql-42.2.6.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

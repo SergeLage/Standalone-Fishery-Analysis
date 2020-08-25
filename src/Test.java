@@ -16,7 +16,7 @@ public class Test {
 		SFAInterface dsa;
 		int vessalId = 2;
 		try {
-			dsa = new SFA(vessalId, 0.0, 0.1);//0.05,0.1 
+			dsa = new SFA(vessalId, 0.0, 0.1,6);//0.05,0.1
 			Log.debugConsole("\nSFA Started ");
 			Limits l = dsa.GetLimit();
 			Log.debugConsole(  "limit: "+ l.min + " "+ l.max);

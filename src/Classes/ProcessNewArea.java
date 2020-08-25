@@ -4,6 +4,7 @@ import DBAccess.ImportData;
 import DBAccess.ImportDataPostgresSQL;
 import Public.GPS;
 import Public.Limits;
+import Utils.Log;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -45,12 +46,16 @@ class ProcessNewArea {
 	 * Constructor that initializes the class members with the received parameters
 	 *  @param limits SOG limits
 	 *  @param limit configuration parameter for area model
+	 *  @param nClusters number of clusters
 	 */
-	ProcessNewArea(Limits limits, double limit)
+	ProcessNewArea(Limits limits, double limit, int nClusters )
 	{
 		this.limits = limits;
 		this.limit = limit;
 		this.vesselId = -1;
+		if (nClusters > 1) {
+			this.nClusters = nClusters;
+		}
 		this.setCluster();
 	}
 	
@@ -59,11 +64,15 @@ class ProcessNewArea {
 	 *  @param limits SOG limits
 	 *  @param limit configuration parameter for area model
 	 *  @param vesselId vessel identification
+	 *  @param nClusters number of clusters
 	 */
-	ProcessNewArea(int vesselId, Limits limits, double limit){
+	ProcessNewArea(int vesselId, Limits limits, double limit,int nClusters){
 		this.limit = limit;
 		this.limits = limits;
 		this.vesselId=vesselId;
+		if (nClusters > 1) {
+			this.nClusters = nClusters;
+		}
 		this.setCluster();
 	}
 	
@@ -84,8 +93,7 @@ class ProcessNewArea {
 				data = dbAcess.GetArea(this.limits, this.vesselId);
 			}
 			
-			this.density.buildClusterer(data); 
-			
+			this.density.buildClusterer(data);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -93,7 +101,7 @@ class ProcessNewArea {
 	}
 	
 	/**
-	 * Recebe dados de localização e classifica se embaração esta em actividade em nova area
+	 * Receives location data and classifies whether it is in activity in a new area
 	 * @param gps new location points 
 	 * @return boolean is fishing in new area
 	*/
@@ -108,6 +116,7 @@ class ProcessNewArea {
 			 double[] distibutionI = this.density.distributionForInstance(test);
 			 double logDensity;
 			 for(int i = 0; i<distibutionI.length;i++) {
+			 	Log.debugConsole(distibutionI[i]);
 				logDensity = -this.density.logDensityForInstance(test);
 				 if (this.limit < distibutionI[i] && logDensity <100) {
 					 return false;

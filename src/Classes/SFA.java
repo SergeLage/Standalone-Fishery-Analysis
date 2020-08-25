@@ -38,18 +38,25 @@ public class SFA implements SFAInterface {
 	 * Configuration parameter for area model
 	 */
 	private double limitArea;
+
+	/**
+	 * Configuration parameter for number of clusters for clustering model
+	 */
+	private int nClusters;
 	
 	/** 
 	 * Constructor that initializes the class members with the received parameters
 	 *  @param limitVelocity configuration parameter for velocity model
 	 *  @param limitArea configuration parameter for area model
+	 * @param nClusters number of clusters
 	 */
-	public SFA(double limitVelocity, double limitArea) {
+	public SFA(double limitVelocity, double limitArea, int nClusters) {
 		this.limitArea = limitArea;
 		this.limitVelocity = limitVelocity;
+		this.nClusters = nClusters;
 		limitVelocity = checkLimit(limitVelocity);
 		this.processVelocity = new ProcessVelocity(limitVelocity);
-		this.processNewArea = new ProcessNewArea(this.processVelocity.getLimit(), limitArea);
+		this.processNewArea = new ProcessNewArea(this.processVelocity.getLimit(), limitArea, nClusters);
 	}
 	
 	/** 
@@ -58,14 +65,16 @@ public class SFA implements SFAInterface {
 	 *  @param limitVelocity configuration parameter for velocity model
 	 *  @param limitArea configuration parameter for area model
 	 *  @param vesselId vessel identification to use as test
+	 * @param nClusters number of clusters
 	 */
-	public SFA(int vesselId, double limitVelocity, double limitArea)
+	public SFA(int vesselId, double limitVelocity, double limitArea,int nClusters)
 	{
 		this.limitArea = limitArea;
 		this.limitVelocity = limitVelocity;
+		this.nClusters = nClusters;
 		limitVelocity = checkLimit(limitVelocity);
 		this.processVelocity = new ProcessVelocity(vesselId, limitVelocity);
-		this.processNewArea = new ProcessNewArea(vesselId, this.processVelocity.getLimit(), checkLimit(limitArea));
+		this.processNewArea = new ProcessNewArea(vesselId, this.processVelocity.getLimit(), checkLimit(limitArea),nClusters);
 	}
 	
 	@Override
@@ -110,7 +119,7 @@ public class SFA implements SFAInterface {
 	 */
 	public void restart() {
 		this.processVelocity = new ProcessVelocity(this.limitVelocity);
-		this.processNewArea = new ProcessNewArea(this.processVelocity.getLimit(), this.limitArea);
+		this.processNewArea = new ProcessNewArea(this.processVelocity.getLimit(), this.limitArea, this.nClusters);
 	}
 	
 	/**
